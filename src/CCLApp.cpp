@@ -59,11 +59,26 @@ class CCLApp : public App {
 
     Skeleton skeleton;
     int      mCurrentFrame = 0;
-    int      frameIndex(int frame) { return frame; }
+    size_t   frameIndex(int frame);
+    vector<size_t> orderedIndices;
+
+    vector<size_t> generateOrderedIndices(const std::vector<CCL_MocapJoint> &joints);
 };
 
 
 //--------------------- SETUP ----------------------------------
+
+size_t CCLApp::frameIndex(int frame)
+{
+  if (orderedIndices.empty())
+  {
+    return frame;
+  }
+  else
+  {
+    return orderedIndices.at(frame);
+  }
+}
 
 void CCLApp::setup()
 {
@@ -74,7 +89,7 @@ void CCLApp::setup()
     setupEnviron( 2000, 2000, 50 );
 
     //SETUP THE CAMERA
-    mCamera.lookAt( vec3( 100, 100, 10 ), vec3( 0 ) );
+    mCamera.lookAt( vec3( 0, 500, 0 ), vec3( -1888.450,  142.485, -891.197 ) );
 
     mCamera.setFarClip(10000);
 
@@ -144,7 +159,28 @@ void CCLApp::setup()
     }
 
 
+  orderedIndices = generateOrderedIndices(jointList);
+}
 
+vector<size_t> CCLApp::generateOrderedIndices(const std::vector<CCL_MocapJoint> &joints)
+{
+  auto count = joints.at(0).jointPositions.size();
+  vector<size_t> indices;
+  indices.reserve(count);
+  for (auto i = 0; i < count; i += 1) {
+    indices.push_back(i);
+  }
+
+  auto sort_joint = 9; // right hand?
+  std::sort(indices.begin(), indices.end(), [&] (size_t lhs, size_t rhs) {
+    //
+    auto hand_left = joints.at(sort_joint).jointPositions.at(lhs);
+    auto hand_right = joints.at(sort_joint).jointPositions.at(rhs);
+
+    return hand_left.x < hand_right.x;
+  });
+
+  return indices;
 }
 
 //--------------------- MOUSEDOWN ------------------------------
@@ -196,9 +232,9 @@ void CCLApp::update()
     //MANUALLY INCREMENT THE FRAME, IF THE mCurrentFrame EXCEEDS TOTAL FRAMES, RESET THE COUNTER
     if (mCurrentFrame < TOTAL_FRAMES)
     {
-    mCurrentFrame += 1;
+      mCurrentFrame += 1;
     } else {
-        mCurrentFrame = 0;
+      mCurrentFrame = 0;
     }
 
    // std::cout << "frame rate: " << getAverageFps() << ", frame count: " << mCurrentFrame << std::endl;
