@@ -180,6 +180,14 @@ vector<size_t> CCLApp::generateOrderedIndices(const std::vector<CCL_MocapJoint> 
     return lhs_joint.x < rhs_joint.x;
   });
 
+  std::stable_sort(indices.begin(), indices.end(), [&] (size_t lhs, size_t rhs) {
+    //
+    auto lhs_joint = joints.at(sort_joint).jointPositions.at(lhs);
+    auto rhs_joint = joints.at(sort_joint).jointPositions.at(rhs);
+
+    return lhs_joint.z < rhs_joint.z;
+  });
+
   return indices;
 }
 
