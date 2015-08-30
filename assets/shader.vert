@@ -3,6 +3,8 @@
 uniform mat4	ciModelViewProjection;
 uniform mat3	ciNormalMatrix;
 
+uniform float uBallScale = 12.0;
+
 in vec4		ciPosition;
 in vec2		ciTexCoord0;
 in vec3		ciNormal;
@@ -14,7 +16,7 @@ out highp vec3	Normal;
 
 void main( void )
 {
-    gl_Position	= ciModelViewProjection * (vec4(vec3(4.0),1)*ciPosition + vec4( vInstancePosition, 0 ) );
+    gl_Position	= ciModelViewProjection * (vec4(vec3(uBallScale),1)*ciPosition + vec4( vInstancePosition, 0 ) );
     Color 		= ciColor;
     TexCoord	= ciTexCoord0;
     Normal		= ciNormalMatrix * ciNormal;

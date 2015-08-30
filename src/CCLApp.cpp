@@ -171,13 +171,13 @@ vector<size_t> CCLApp::generateOrderedIndices(const std::vector<CCL_MocapJoint> 
     indices.push_back(i);
   }
 
-  auto sort_joint = 9; // right hand?
-  std::sort(indices.begin(), indices.end(), [&] (size_t lhs, size_t rhs) {
+  auto sort_joint = 27;
+  std::stable_sort(indices.begin(), indices.end(), [&] (size_t lhs, size_t rhs) {
     //
-    auto hand_left = joints.at(sort_joint).jointPositions.at(lhs);
-    auto hand_right = joints.at(sort_joint).jointPositions.at(rhs);
+    auto lhs_joint = joints.at(sort_joint).jointPositions.at(lhs);
+    auto rhs_joint = joints.at(sort_joint).jointPositions.at(rhs);
 
-    return hand_left.x < hand_right.x;
+    return lhs_joint.x < rhs_joint.x;
   });
 
   return indices;
@@ -213,7 +213,7 @@ void CCLApp::update()
             vec3 newPos(vec3(instanceX,instanceY, instanceZ));
 
 
-        if (i == 44){
+        if (i == 27){
             std::cout << newPos << endl;
         }
         framePositions[i] = newPos;

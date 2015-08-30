@@ -93,9 +93,6 @@ void Skeleton::update(const std::vector<glm::vec3>& pos){
     r_foot = boneJoints[35];
     l_hip = boneJoints[31];
     l_knee = boneJoints[43];
-    l_foot = boneJoints[44];
-    
-    std::cout << l_foot << std::endl;
-    
+    l_foot = boneJoints[44];    
 }
 
